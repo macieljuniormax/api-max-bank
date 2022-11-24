@@ -60,12 +60,17 @@ app.get('/statement', verifyIfExistsAccountCPF, (request, response) => {
 app.get('/statement/date', verifyIfExistsAccountCPF, (request, response) => {
   const { customer } = request
   const { date } = request.query
+
   console.log(date)
+
   const dateFormated = new Date(date + ' 00:00')
+
   console.log(dateFormated)
-  const statement = customer.statement.filter((statement) => {
-    return statement.created_at.toDateString() === new Date(dateFormated).toDateString()
-  })
+
+  const statement = customer.statement.filter((statement) =>
+    statement.created_at.toDateString() ===
+    new Date(dateFormated).toDateString()
+  )
 
   return response.json(statement)
 })
@@ -104,4 +109,26 @@ app.post('/withdrow', verifyIfExistsAccountCPF, (request, response) => {
   customer.statement.push(statementOperation)
 
   return response.status(201).send()
+})
+
+app.put('/account', verifyIfExistsAccountCPF, (request, response) => {
+  const { name } = request.body
+  const { customer } = request
+
+  customer.name = name
+
+  return response.status(201).send()
+})
+
+app.get('/account', verifyIfExistsAccountCPF, (request, response) => {
+  const { customer } = request
+
+  return response.json(customer)
+})
+
+app.delete('/account', verifyIfExistsAccountCPF, (request, response) => {
+  const { customer } = request
+
+  customers.splice(customer, 1)
+  return response.status(200).json(customers)
 })
